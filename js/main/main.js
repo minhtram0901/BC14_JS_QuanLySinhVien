@@ -47,54 +47,28 @@ function hienThi(dsnv) {
     tbody.innerHTML = html;
 }
 
-function themNV() {
-    var taiKhoan = document.getElementById("tknv").value;
-    var hoTen = document.getElementById("name").value;
-    var email = document.getElementById("email").value;
-    var matKhau = document.getElementById("password").value;
-    var ngayLam = document.getElementById("datepicker").value;
-    var luongCoBan = document.getElementById("luongCB").value;
-    var heSoChucVu = +document.getElementById("chucvu").value;
-    var gioLam = document.getElementById("gioLam").value;
-
-    // reset span error
-    var elements = document.getElementsByClassName("sp-thongbao");
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].style.display = "none";
-    }
-    
-    var nhanVien = new NhanVien(
-        taiKhoan,
-        hoTen,
-        email,
-        matKhau,
-        ngayLam,
-        luongCoBan,
-        heSoChucVu,
-        gioLam
-    );
-
-    var isValid = xacThucDuLieu(nhanVien);
-    if (kiemTraTonTai(nhanVien)){
-        isValid &= false;
-        document.getElementById("tbTKNV").innerHTML = "Tài khoản đã tồn tại";
-        document.getElementById("tbTKNV").style.display = "inline-block";
-    }
-
-    if (!isValid) {
-        return;
-    }
-
-    qlnv.themNV(nhanVien);
-    hienThi(qlnv.dsnv);
-    resetForm();
+function resetForm() {
+    updateForm({});
+    document.getElementById("tknv").disabled = false;
 }
 
-function xacThucDuLieu(nhanVien) {
+function updateForm(nhanVien) {
+    document.getElementById("tknv").value = nhanVien.taiKhoan || "";
+    document.getElementById("name").value = nhanVien.hoTen || "";
+    document.getElementById("email").value = nhanVien.email || "";
+    document.getElementById("password").value = nhanVien.matKhau || "";
+    document.getElementById("datepicker").value = nhanVien.ngayLam || "";
+    document.getElementById("luongCB").value = nhanVien.luongCoBan || "";
+    document.getElementById("chucvu").value = nhanVien.heSoChucVu || "";
+    document.getElementById("gioLam").value = nhanVien.gioLam || "";
+}
+
+function xacThucDuLieuThem(nhanVien) {
     var validator = new Validator();
     var isValid =
         validator.isRequired("tbTKNV", nhanVien.taiKhoan) &&
-        validator.account("tbTKNV", nhanVien.taiKhoan);
+        validator.account("tbTKNV", nhanVien.taiKhoan) &&
+        validator.isNoExist("tbTKNV", nhanVien.taiKhoan,qlnv.dsnv);
     isValid &=
         validator.isRequired("tbTen", nhanVien.hoTen) &&
         validator.fullname("tbTen", nhanVien.hoTen);
@@ -127,27 +101,80 @@ function xacThucDuLieu(nhanVien) {
     return true;
 }
 
-function kiemTraTonTai(nhanVien){
-    if (qlnv.chonNV(nhanVien.taiKhoan)) {
-        return true;
+function xacThucDuLieuSua(nhanVien) {
+    var validator = new Validator();
+    var isValid =
+        validator.isRequired("tbTKNV", nhanVien.taiKhoan) &&
+        validator.account("tbTKNV", nhanVien.taiKhoan) &&
+        validator.isExist("tbTKNV", nhanVien.taiKhoan,qlnv.dsnv);
+    isValid &=
+        validator.isRequired("tbTen", nhanVien.hoTen) &&
+        validator.fullname("tbTen", nhanVien.hoTen);
+    isValid &=
+        validator.isRequired("tbEmail", nhanVien.email) &&
+        validator.email("tbEmail", nhanVien.email);
+    isValid &=
+        validator.isRequired("tbMatKhau", nhanVien.matKhau) &&
+        validator.password("tbMatKhau", nhanVien.matKhau);
+    isValid &=
+        validator.isRequired("tbNgay", nhanVien.ngayLam) &&
+        validator.ngayLam("tbNgay", nhanVien.ngayLam);
+    isValid &=
+        validator.isRequired("tbLuongCB", nhanVien.luongCoBan) &&
+        validator.luongCoBan("tbLuongCB", nhanVien.luongCoBan);
+    isValid &= validator.chucVu("tbChucVu", nhanVien.heSoChucVu);
+    isValid &=
+        validator.isRequired("tbGiolam", nhanVien.gioLam) &&
+        validator.gioLam("tbGiolam", nhanVien.gioLam);
+
+    if (!isValid) {
+        for (var key in validator.errors) {
+            if (validator.errors[key]) {
+                document.getElementById(key).innerHTML = validator.errors[key];
+                document.getElementById(key).style.display = "inline-block";
+            }
+        }
+        return false;
     }
-    return false;
+    return true;
 }
 
-function resetForm() {
-    updateForm({});
-    document.getElementById("tknv").disabled = false;
-}
+function themNV() {
+    var taiKhoan = document.getElementById("tknv").value.toLowerCase();
+    var hoTen = document.getElementById("name").value;
+    var email = document.getElementById("email").value;
+    var matKhau = document.getElementById("password").value;
+    var ngayLam = document.getElementById("datepicker").value;
+    var luongCoBan = document.getElementById("luongCB").value;
+    var heSoChucVu = +document.getElementById("chucvu").value;
+    var gioLam = document.getElementById("gioLam").value;
 
-function updateForm(nhanVien) {
-    document.getElementById("tknv").value = nhanVien.taiKhoan || "";
-    document.getElementById("name").value = nhanVien.hoTen || "";
-    document.getElementById("email").value = nhanVien.email || "";
-    document.getElementById("password").value = nhanVien.matKhau || "";
-    document.getElementById("datepicker").value = nhanVien.ngayLam || "";
-    document.getElementById("luongCB").value = nhanVien.luongCoBan || "";
-    document.getElementById("chucvu").value = nhanVien.heSoChucVu || "";
-    document.getElementById("gioLam").value = nhanVien.gioLam || "";
+    // reset span error
+    var elements = document.getElementsByClassName("sp-thongbao");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.display = "none";
+    }
+    
+    var nhanVien = new NhanVien(
+        taiKhoan,
+        hoTen,
+        email,
+        matKhau,
+        ngayLam,
+        luongCoBan,
+        heSoChucVu,
+        gioLam
+    );
+
+    var isValid = xacThucDuLieuThem(nhanVien);
+
+    if (!isValid) {
+        return;
+    }
+
+    qlnv.themNV(nhanVien);
+    hienThi(qlnv.dsnv);
+    resetForm();
 }
 
 function delegationTable(event) {
@@ -188,7 +215,7 @@ function capNhatNhanVien() {
     for (var i = 0; i < elements.length; i++) {
         elements[i].style.display = "none";
     }
-    var taiKhoan = document.getElementById("tknv").value;
+    var taiKhoan = document.getElementById("tknv").value.toLowerCase();
     var hoTen = document.getElementById("name").value;
     var email = document.getElementById("email").value;
     var matKhau = document.getElementById("password").value;
@@ -208,17 +235,12 @@ function capNhatNhanVien() {
         gioLam
     );
 
-    var isValid = xacThucDuLieu(nhanVien);
-    if (!kiemTraTonTai(nhanVien)){
-        isValid &= false;
-        document.getElementById("tbTKNV").innerHTML = "Tài khoản không tồn tại";
-        document.getElementById("tbTKNV").style.display = "inline-block";
-    }
-
+    var isValid = xacThucDuLieuSua(nhanVien);
+  
     if (!isValid) {
         return;
     }
-  
+
     qlnv.capNhatNV(nhanVien);
     hienThi(qlnv.dsnv);
     resetForm();

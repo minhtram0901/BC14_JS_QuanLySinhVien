@@ -4,10 +4,11 @@ function Validator() {
 
 Validator.prototype.isRequired = function (name, value) {
   if (!value) {
+    console.log("loi khong nhap");
     this.errors[name] = "Vui lòng nhập vào trường này";
     return false;
   }
-
+  console.log("co nhap");
   return true;
 };
 
@@ -109,3 +110,24 @@ Validator.prototype.gioLam = function (name, value){
 
   return true;
 };
+
+Validator.prototype.isExist = function (name, taiKhoan, dsnv){
+  if(dsnv.find(function (nv) {
+    return nv.taiKhoan === taiKhoan;
+  })){
+    return true;
+  }
+  this.errors[name] = "Tài khoản không tồn tại";
+  return false;
+}
+
+Validator.prototype.isNoExist = function (name, taiKhoan, dsnv){
+  if(dsnv.find(function (nv) {
+    return nv.taiKhoan === taiKhoan;
+  })){
+    this.errors[name] = "Tài khoản đã tồn tại";
+    return false;
+  }
+  
+  return true;
+}
