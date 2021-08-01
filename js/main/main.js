@@ -12,6 +12,12 @@ hienThi(qlnv.dsnv);
 
 function disableUpdate(){
     document.getElementById("btnCapNhat").disabled = true;
+    resetForm();
+    // reset span error
+    var elements = document.getElementsByClassName("sp-thongbao");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.display = "none";
+    }
 }
 
 function hienThi(dsnv) {
@@ -49,7 +55,7 @@ function themNV() {
     var ngayLam = document.getElementById("datepicker").value;
     var luongCoBan = document.getElementById("luongCB").value;
     var heSoChucVu = +document.getElementById("chucvu").value;
-    var gioLam = +document.getElementById("gioLam").value;
+    var gioLam = document.getElementById("gioLam").value;
 
     // reset span error
     var elements = document.getElementsByClassName("sp-thongbao");
@@ -131,11 +137,6 @@ function kiemTraTonTai(nhanVien){
 function resetForm() {
     updateForm({});
     document.getElementById("tknv").disabled = false;
-    // reset span error
-    // var elements = document.getElementsByClassName("sp-thongbao");
-    // for (var i = 0; i < elements.length; i++) {
-    //     elements[i].style.display = "none";
-    // }
 }
 
 function updateForm(nhanVien) {
@@ -150,11 +151,7 @@ function updateForm(nhanVien) {
 }
 
 function delegationTable(event) {
-    // reset span error
-    var elements = document.getElementsByClassName("sp-thongbao");
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].style.display = "none";
-    }
+
     var taiKhoan = event.target.getAttribute("data-account");
     var action = event.target.getAttribute("data-action");
 
@@ -170,11 +167,13 @@ function delegationTable(event) {
 }
 
 function chonNhanVien(taiKhoan) {
+    // reset span error
+    var elements = document.getElementsByClassName("sp-thongbao");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.display = "none";
+    }
     var nhanVien = qlnv.chonNV(taiKhoan);
-
-    // disabled input maSV để người dùng k sửa đc
     document.getElementById("tknv").disabled = true;
-
     updateForm(nhanVien);
 }
 
@@ -184,7 +183,11 @@ function xoaNhanVien(taiKhoan) {
 }
 
 function capNhatNhanVien() {
-    // resetForm();
+    // reset span error
+    var elements = document.getElementsByClassName("sp-thongbao");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.display = "none";
+    }
     var taiKhoan = document.getElementById("tknv").value;
     var hoTen = document.getElementById("name").value;
     var email = document.getElementById("email").value;
@@ -192,7 +195,7 @@ function capNhatNhanVien() {
     var ngayLam = document.getElementById("datepicker").value;
     var luongCoBan = document.getElementById("luongCB").value;
     var heSoChucVu = +document.getElementById("chucvu").value;
-    var gioLam = +document.getElementById("gioLam").value;
+    var gioLam = document.getElementById("gioLam").value;
 
     var nhanVien = new NhanVien(
         taiKhoan,
@@ -206,6 +209,11 @@ function capNhatNhanVien() {
     );
 
     var isValid = xacThucDuLieu(nhanVien);
+    if (!kiemTraTonTai(nhanVien)){
+        isValid &= false;
+        document.getElementById("tbTKNV").innerHTML = "Tài khoản không tồn tại";
+        document.getElementById("tbTKNV").style.display = "inline-block";
+    }
 
     if (!isValid) {
         return;
@@ -214,11 +222,6 @@ function capNhatNhanVien() {
     qlnv.capNhatNV(nhanVien);
     hienThi(qlnv.dsnv);
     resetForm();
-    // reset span error
-    var elements = document.getElementsByClassName("sp-thongbao");
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].style.display = "none";
-    }
 }
 
 function timKiemNhanVien() {

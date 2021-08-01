@@ -12,8 +12,9 @@ Validator.prototype.isRequired = function (name, value) {
 };
 
 Validator.prototype.account  = function (name, value) {
-  if (!/^[a-z0-9]{4,6}$/.test(value)) {
-    this.errors[name] = "Tài khoản gồm chữ thường và số có độ dài 4-6 ký tự.";
+  // if (!/^[a-zA-Z0-9]{4,6}$/.test(value)) {
+  if (!/^(?=.{4,6}$)(?![0-9])[a-zA-Z0-9]+$/.test(value)) {
+    this.errors[name] = "Tài khoản tối đa 4 - 6 ký số, không bắt đầu bằng số";
     return false;
     
   }
@@ -38,9 +39,10 @@ Validator.prototype.email = function (name, value) {
 };
 
 Validator.prototype.password = function (name, value) {
-  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]).{6,10}$/.test(value)) {
+  // if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]).{6,10}$/.test(value)) {
+  if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]).{6,10}$/.test(value)) {
     this.errors[name] = "Mật khẩu không hợp lệ";
-    return false;
+      return false;
   }
 
   return true;
@@ -60,6 +62,7 @@ Validator.prototype.ngayLam = function (name, dateString){
     var year = parseInt(parts[2], 10);
 
     // Check the ranges of month and year
+    console.log("year", year);
     if(year < 1900 || year > 3000 || month < 1 || month > 12){
       this.errors[name] = "Ngày làm không hợp lệ";
       return false;
@@ -81,7 +84,7 @@ Validator.prototype.ngayLam = function (name, dateString){
 };
 
 Validator.prototype.luongCoBan = function (name, value){
-  if(value < 1_000_000 || value > 20_000_000){
+  if(value < 1_000_000 || value > 20_000_000 || isNaN(value)){
     this.errors[name] = "Lương cơ bản từ 1 triệu đến 20 triệu";
     return false;
   }
@@ -99,7 +102,7 @@ Validator.prototype.chucVu = function (name, value){
 };
 
 Validator.prototype.gioLam = function (name, value){
-  if(value < 80 || value > 200){
+  if(value < 80 || value > 200  || isNaN(value)){
     this.errors[name] = "Giờ làm từ 80 - 200 giờ";
     return false;
   }
