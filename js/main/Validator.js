@@ -4,11 +4,9 @@ function Validator() {
 
 Validator.prototype.isRequired = function (name, value) {
   if (!value) {
-    console.log("loi khong nhap");
     this.errors[name] = "Vui lòng nhập vào trường này";
     return false;
   }
-  console.log("co nhap");
   return true;
 };
 
@@ -63,7 +61,6 @@ Validator.prototype.ngayLam = function (name, dateString){
     var year = parseInt(parts[2], 10);
 
     // Check the ranges of month and year
-    console.log("year", year);
     if(year < 1900 || year > 3000 || month < 1 || month > 12){
       this.errors[name] = "Ngày làm không hợp lệ";
       return false;
